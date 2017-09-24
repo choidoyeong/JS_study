@@ -40,6 +40,11 @@ router.route('/process/login').post(function(req, res) {
     
 });
 
+// 등록되지 않은 패스에 대한 오류 응답
+app.all('*', function(req, res) {
+    res.status(404).sed('<h1>ERROR - 페이지를 찾을 수 없습니다.</h1>');
+});
+
 // 라우터 객체를 app 객체에 등록
 app.use('/', router);
 
