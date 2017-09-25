@@ -1,11 +1,11 @@
 // Express 기본 모듈
 var express = require('express')
-  , http = require('http')
-  , path = require('path');
+, http = require('http')
+, path = require('path');
 
 // Express 미들웨어
 var bodyParser = require('body-parser')
-  , static = require('serve-static');
+, static = require('serve-static');
 
 // 오류 핸들러 모듈 사용
 var expressErrorHandler = require('express-error-handler');
@@ -28,33 +28,33 @@ app.use(bodyParser.json());
 app.use('/public', static(path.join(__dirname, 'public')));
 
 // 라우팅 함수 들록
-router.route('/process/login').post(function(req, res) {
-    console.log('/process/login 처리함');
-    
-    var paramId = req.body.id || req.query.id;
-    var paramPassword = req.body.password || req.query.password;
-    
-    res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
-    res.write('<h1>Express 서버에서 응답한 결과입니다.</h1>');
-    res.write('<div><p>Param id : '+ paramId + '</p></div>');
-    res.write('<div><p>Param password : '+ paramPassword + '</p></div>');
-    res.write("<br><br><a href='/public/login2.html'>로그인 페이지로 돌아가기</a>");
-    res.end();
-    
+router.route('/process/users/:id').get( function(req, res) {
+  console.log('/process/users/:id 처리함');
+  
+  var paramId = req.params.id;
+
+  console.log('/porcess/users와 토큰 %s를 이용해 처리함.', paramId);
+  
+  res.writeHead('200', {'Content-Type':'text/html;charset=utf8'});
+  res.write('<h1>Express 서버에서 응답한 결과입니다.</h1>');
+  res.write('<div><p>Param id : '+ paramId + '</p></div>');
+  res.end();
+  
 });
+
+// 라우터 객체를 app 객체에 등록
+app.use('/', router);
 
 // 모든 라우터 처리 끝난 후 404 오류 페이지 처리
 var errorHandler = expressErrorHandler({
-    static: {
-        '404': './public/404.html' 
-    }
+  static: {
+      '404': './public/404.html' 
+  }
 });
 
 app.use( expressErrorHandler.httpError(404) );
 app.use( errorHandler );
-// 라우터 객체를 app 객체에 등록
-app.use('/', router);
 
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+console.log('Express server listening on port ' + app.get('port'));
 });

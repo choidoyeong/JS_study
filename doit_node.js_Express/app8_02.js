@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 app.use('/public', static(path.join(__dirname, 'public')));
 
 // 라우팅 함수 들록
-router.route('/process/login/:name').post(function(req, res) {
+router.route('/process/login/:name').get(function(req, res) {
     console.log('/process/login/:name 처리함');
     
     var paramName = req.params.name;
