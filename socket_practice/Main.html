@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script>
+        var name;
+        window.onload = function() {
+            var socket = io.connect();
+
+            $('#make').click(function() {
+                var newRoomName = prompt('방 이름을 입력하세요','');
+                name = prompt('이름을 입력하세요','');
+                socket.emit('makeRoom', {
+                    room: newRoomName,
+                    name: name
+                });
+            });
+
+            $('#join').click(function() {
+                name = prompt('이름을 입력하세요','');
+                socket.emit('join', {
+                    room: $('#room').val(),
+                    name: name
+                });
+            });
+
+            $('#send').click(function(){
+                socket.emit('send', $('#message').val());
+            });
+
+            $('#kick').click(function(){
+                socket.emit('kick', $('#member').val());
+            });
+
+            socket.on('message', function(data) {
+                $('#a').append('<p>'+data+'</p>');
+            });
+            
+            socket.on('exist', function(data) {
+                alert('이미 존재하는 방 입니다.')
+            });
+
+            socket.on('make', function(data) {
+                $('#room').empty();
+                for(var i = 0;i < data.length;i++){
+                    $('#room').append('<option value='+data[i]+'>'+data[i]+'</option>');
+                }
+            });
+
+            socket.on('join', function(data) {
+                $('#member').empty();
+                for(var j = 0;j < data.length;j++){
+                    $('#member').append('<option value='+data[j]+'>'+data[j]+'</option>');
+                }
+            });
+            
+            socket.on('leave', function(data) {
+                console.log('leave');
+                socket.emit('leave');
+            });
+
+            socket.on('s', function(data) {
+                console.log('dd');
+            })
+        }
+    </script>
+</head>
+<body>
+    <select id="room">
+
+    </select>
+    <button id="join">Join</button>
+    <button id="make">Make</button>
+    <hr>
+    <input type="text" id="message">
+    <button id="send">Send</button>
+    <select id="member">
+
+    </select>
+    <button id="kick">Kick</button>
+    <hr>
+    <div id="a">
+
+    </div>
+</body>
+</html>
